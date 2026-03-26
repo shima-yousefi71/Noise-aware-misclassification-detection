@@ -9,24 +9,23 @@ The method operates on intermediate features extracted from a VGG19 model (layer
 ## Pipeline
 The implementation follows these steps:
 
-1. Extract intermediate features from VGG19 (layer 20)
-2. Generate adversarial samples (external method)
-3. Construct original and mixed datasets
-4. Add noise with different levels
-5. Train adVAE on noisy original data
-6. Extract detection features using the trained adVAE
-7. Generate CSV files for original and mixed data
+1. Retrain a pretrained VGG19 model on CIFAR-100
+2. Collect intermediate features from VGG19 layer 20
+3. Generate adversarial intermediate samples
+4. Build original and mixed datasets
+5. Add noise with different levels
+6. Train adVAE on noisy original data
+7. Extract detection features and generate CSV files
 8. Split mixed data into validation and test sets
 9. Train and tune OC-SVM
-10. Evaluate on test data
+10. Evaluate on the test set
 
 ## Repository Structure
-- `src/` : core implementation (data processing, noise, adVAE, OC-SVM, evaluation)
-- `scripts/` : runnable scripts for each stage of the pipeline
-- `configs/` : configuration files (model, layer, noise settings)
-- `models/` : saved models (VGG19,adVAE, OC-SVM)
-- `data/` : intermediate and processed data (features, noisy data, CSV files)
-- `results/` : outputs, logs, and evaluation results
+- `src/` : core implementation
+- `scripts/` : runnable files for each stage
+- `models/` : saved models (VGG19, adVAE, OC-SVM)
+- `data/` : intermediate and processed data
+- `results/` : outputs and evaluation results
 
 ## Status
 This repository is under development
