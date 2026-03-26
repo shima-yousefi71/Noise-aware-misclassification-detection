@@ -66,6 +66,7 @@ print(f'Test Loss: {loss:.4f}')
 print(f'Test Accuracy: {accuracy:.4f}')
 
 # Save the trained model
+os.makedirs('models', exist_ok=True)
 model.save('models/vgg19_cifar100.h5')
 print("Model saved as models/vgg19_cifar100.h5")
 
