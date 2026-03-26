@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 from torch import optim
 from torch.utils.data import DataLoader
-from src.data.dataset import FeatureDataset, ToTensorTransform
+from src.data.dataset import UnlabeledDataset, ToTensor
 from src.advae.advae_model import adVAE
 
 # --- Hyperparameters ---
@@ -148,6 +148,6 @@ for epoch in range(1, epochs + 1):
     )
 
 # --- Save Model ---
-os.makedirs("Models-advae", exist_ok=True)
-torch.save(model.state_dict(), "Models-advae/advae_model.pt")
+os.makedirs("models", exist_ok=True)
+torch.save(model.state_dict(), "models/advae_model.pt")
 
