@@ -2,9 +2,10 @@
 
 ## Overview
 This repository provides the implementation of a noise-aware framework for detecting adversarial misclassification attacks in collaborative DNN inference.
+Accepted at IEEE/ACM CCGrid 2026
 
 The method operates on intermediate features extracted from a VGG19 model (layer 20) trained on CIFAR-100. It considers both adversarial manipulation and noise during detection.
-Accepted at IEEE/ACM CCGrid 2026
+
 ## Pipeline
 The implementation follows these steps:
 
