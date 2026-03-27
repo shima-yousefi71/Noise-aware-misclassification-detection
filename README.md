@@ -67,7 +67,8 @@ If you use this work, please cite:
   journal={arXiv preprint arXiv:2603.17914},
   year={2026},
   doi={10.48550/arXiv.2603.17914}
-}```
+}
+```
 
 ## Contact
 For questions, please open an issue in this repository.
