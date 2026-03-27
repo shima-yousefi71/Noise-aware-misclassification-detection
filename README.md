@@ -51,7 +51,23 @@ The main workflow is:
 7. Train OC-SVM
 8. Predict on test data
 9. Evaluate results
-10. 
+---
+
+## ⚙️ Requirements
+
+- **Python**: 3.8+
+
+**Core Libraries**
+- numpy, pandas, scikit-learn, matplotlib, seaborn, joblib
+
+**Deep Learning**
+- torch (PyTorch), tensorflow
+
+**Utilities**
+- tqdm
+
+---
+
 ## Status
 This repository is under development. The current version provides the main pipeline for the VGG19 layer 20 setting.
 
