@@ -66,7 +66,7 @@ def main(train_csv, dev_csv, model_dir, seed):
             if (score_key > best_key):
                 best = {"model": oc, "f1": f1, "nu": nu, "gamma": gamma, "report": rep}
 
-    print(f"\n✅ Selected nu={best['nu']} gamma={best['gamma']} | DEV F1={best['f1']:.4f}"
+    print(f"\n Selected nu={best['nu']} gamma={best['gamma']} | DEV F1={best['f1']:.4f}"
 
     # 6) Save artifacts
     joblib.dump(scaler, os.path.join(model_dir, "scaler.pkl"))
