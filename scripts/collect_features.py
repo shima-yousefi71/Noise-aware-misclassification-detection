@@ -28,8 +28,8 @@ indices = np.random.permutation(x_train.shape[0])
 x_train = x_train[indices]
 y_train = y_train[indices]
 
-# Collect only a subset of samples (e.g., 5000)
-num_samples = 10000
+# Collect only a subset of samples (e.g., 1000)
+num_samples = 1000
 x_train_subset = x_train[:num_samples]
 y_train_subset = y_train[:num_samples]
 
