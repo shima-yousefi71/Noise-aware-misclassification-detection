@@ -21,7 +21,15 @@ The implementation follows these steps:
 9. Train and tune One-Class SVM (OC-SVM)
 10. Predict on the test set
 11. Evaluate detection results
+<!--
+## Adversarial Sample Generation
 
+Adversarial intermediate features used in this project are generated using an external repository:
+
+
+
+The generated samples are then used as input to the detection pipeline.
+-->
 ## Repository Structure
 - `src/` : core implementation
 - `scripts/` : runnable scripts for each stage of the pipeline
