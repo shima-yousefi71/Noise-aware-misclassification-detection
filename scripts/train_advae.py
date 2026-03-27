@@ -25,7 +25,7 @@ model = adVAE(input_shape=input_shape, latent_dim=latent_dim).to(device)
 optimizer = optim.Adam(model.parameters(), lr=lr)
 
 # =====================================================================
-#  NEW: helper to compute reconstruction MSE + MAD (per batch)
+#  compute reconstruction MSE + MAD (per batch)
 # =====================================================================
 def recon_stats(x_hat, x):
     """
@@ -85,7 +85,7 @@ def advae_loss(
     # Robust reconstruction part of the loss
     recon_loss = mad_weight * mad_rec + mse_weight * mse_rec
 
-    # --- Latent shift (feature you keep) ---
+    # --- Latent shift (feature to keep) ---
     # per-sample ||z_t - z||^2
     ls_per = ((z_t - z) ** 2).mean(dim=1)   # (B,)
     latent_shift_mean = ls_per.mean()       # scalar
@@ -93,7 +93,7 @@ def advae_loss(
     # --- KL loss (standard VAE term) ---
     kl_loss = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
 
-    # --- Adversarial reconstruction branch (also robust via MAD) ---
+    # --- Adversarial reconstruction
     B = x.size(0)
     x_flat   = x.view(B, -1)
     x_t_flat = x_t.view(B, -1)
@@ -107,7 +107,7 @@ def advae_loss(
     return total_loss, mse_rec, latent_shift_mean, mad_rec, adv_mad
 
 # =====================================================================
-#  Training Loop (slightly extended logging)
+#  Training Loop 
 # =====================================================================
 model.train()
 for epoch in range(1, epochs + 1):
