@@ -23,7 +23,6 @@ def main(data_dir, model_path, output_csv,
     torch.manual_seed(seed)
     np.random.seed(seed)
     
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
     print(f"[RUN] data_dir={data_dir}  output={output_csv}  T={T}  device={device}  batch={batch_size}")
