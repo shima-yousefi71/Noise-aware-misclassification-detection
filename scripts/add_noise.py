@@ -18,7 +18,7 @@ def sample_sas(size, alpha=1.5, gamma=0.05, delta=0.0, beta=0.0, rng=None):
         factor = (np.cos(U - alpha * U) / W) ** ((1.0 - alpha) / alpha)
         X = term * factor
     else:
-        # α = 1 (Cauchy); here beta is 0, but keep general form for completeness
+        
         X = (2/np.pi) * ( (np.pi/2 + beta*U) * np.tan(U) - beta *
                           np.log((np.pi/2)*W*np.cos(U)/(np.pi/2 + beta*U)) )
     return gamma * X + delta  # symmetric (beta≈0)
@@ -92,7 +92,7 @@ def main():
         if i in noisy_indices:
             y = add_impulsive_noise(x, alpha=args.alpha, gamma=args.gamma, delta=args.delta,
                                     burst_p=burst_p, rng=rng, clip=clip)
-            # Keep traceability by prefixing; stays compatible with your filename-based labeling
+            
             out_name = f"sas_{base}"
             out_path = os.path.join(args.combined_dir, out_name)
             save_feature_dict(out_path, y)
