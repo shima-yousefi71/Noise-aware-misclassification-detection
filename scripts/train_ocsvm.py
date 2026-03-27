@@ -5,10 +5,9 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import classification_report, f1_score
 import joblib
 
-# ==== Choose features  ====
+# ==== Choose your features here ====
 FEATURE_COLS = ["recon_error", "latent_shift", "resid_median", "resid_mad"]
-
-
+ #
 def load_train_normals(train_csv):
     df = pd.read_csv(train_csv).copy()
     # keep originals (clean + sas); drop any generated rows if present
@@ -17,15 +16,12 @@ def load_train_normals(train_csv):
     X = df[FEATURE_COLS].values
     return df, X
 
-
 def load_mixed(mixed_csv):
     df = pd.read_csv(mixed_csv).copy()
     X = df[FEATURE_COLS].values
     # 0=normal, 1=anomaly (from filename, as in your pipeline)
-    y = df["sample"].apply(lambda s: 0 if str(s).startswith(("original", "sas")) else 1).values
+    y = df["sample"].apply(lambda s: 0 if str(s).startswith(("original","sas")) else 1).values
     return df, X, y
-
-
 def main(train_csv, dev_csv, model_dir, seed):
     os.makedirs(model_dir, exist_ok=True)
 
@@ -33,7 +29,7 @@ def main(train_csv, dev_csv, model_dir, seed):
     df_tr, X_tr = load_train_normals(train_csv)
 
     # 2) Fit robust scaler on TRAIN normals
-    scaler = RobustScaler(quantile_range=(10, 90))
+    scaler = RobustScaler(quantile_range=(10,90))
     X_tr_s = scaler.fit_transform(X_tr)
 
     # 3) Load DEV set for tuning
@@ -45,7 +41,7 @@ def main(train_csv, dev_csv, model_dir, seed):
     gam_grid = ["scale", 0.1, 0.5, 1.0, 2.0]
     best = {"model": None, "f1": -1.0, "nu": None, "gamma": None, "report": None}
 
-    print("\nTuning One-Class SVM on DEV (maximize F1; keep high anomaly recall)")
+    print("\n🔍 Tuning One-Class SVM on DEV (maximize F1; keep high anomaly recall)")
     for nu in nu_grid:
         for gamma in gam_grid:
             oc = OneClassSVM(kernel="rbf", nu=nu, gamma=gamma)
@@ -53,61 +49,36 @@ def main(train_csv, dev_csv, model_dir, seed):
 
             # OCSVM predict: +1=normal, -1=outlier
             y_pred_dev = oc.predict(X_dev_s)
-            y_pred_dev = np.where(y_pred_dev == 1, 0, 1)  # map to 0=normal, 1=anomaly
+            y_pred_dev = np.where(y_pred_dev == 1, 0, 1)  # map to 0=normal,1=anomaly
 
             rep = classification_report(
-                y_dev, y_pred_dev, labels=[0, 1],
-                target_names=["normal", "anomaly"], zero_division=0, output_dict=True
+                y_dev, y_pred_dev, labels=[0,1],
+                target_names=["normal","anomaly"], zero_division=0, output_dict=True
             )
             anom_recall = rep["anomaly"]["recall"]
             f1 = f1_score(y_dev, y_pred_dev)
 
-            print(
-                f"nu={nu:>4}, gamma={str(gamma):>5} | "
-                f"F1={f1:.4f} | anom_recall={anom_recall:.3f} | "
-                f"norm_recall={rep['normal']['recall']:.3f}"
-            )
+            print(f"nu={nu:>4}, gamma={str(gamma):>5} | F1={f1:.4f} | anom_recall={anom_recall:.3f} | norm_recall={rep['normal']['recall']:.3f}")
 
             # prefer models with strong anomaly recall; break ties by F1
             score_key = (anom_recall, f1)
-            best_key = (-1.0, -1.0) if best["model"] is None else (
-                best["report"]["anomaly"]["recall"], best["f1"]
-            )
-            if score_key > best_key:
-                best = {
-                    "model": oc,
-                    "f1": f1,
-                    "nu": nu,
-                    "gamma": gamma,
-                    "report": rep
-                }
+            best_key  = (-1.0, -1.0) if best["model"] is None else (best["report"]["anomaly"]["recall"], best["f1"])
+            if (score_key > best_key):
+                best = {"model": oc, "f1": f1, "nu": nu, "gamma": gamma, "report": rep}
 
-    print(
-        f"\nSelected nu={best['nu']} gamma={best['gamma']} | "
-        f"DEV F1={best['f1']:.4f} | "
-        f"anom_recall={best['report']['anomaly']['recall']:.3f}"
-    )
+    print(f"\n✅ Selected nu={best['nu']} gamma={best['gamma']} | DEV F1={best['f1']:.4f}"
 
-    # 5) Save artifacts
+    # 6) Save artifacts
     joblib.dump(scaler, os.path.join(model_dir, "scaler.pkl"))
     joblib.dump(best["model"], os.path.join(model_dir, "ocsvm_model.pkl"))
     with open(os.path.join(model_dir, "config.json"), "w") as f:
-        json.dump(
-            {
-                "feature_cols": FEATURE_COLS,
-                "nu": best["nu"],
-                "gamma": best["gamma"]
-            },
-            f,
-            indent=2
-        )
-
+        json.dump({"feature_cols": FEATURE_COLS,
+                   "nu": best["nu"], "gamma": best["gamma"]}, f, indent=2)
     print(f"\n[Saved] {model_dir}/scaler.pkl, ocsvm_model.pkl, config.json")
-
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--train_csv", default="results/train.csv")
+    ap.add_argument("--train_csv", default="results/unsupervised_scores_train.csv")
     ap.add_argument("--dev_csv", default="results/dev.csv")
     ap.add_argument("--model_dir", default="models/ocsvm")
     ap.add_argument("--seed", type=int, default=42)
