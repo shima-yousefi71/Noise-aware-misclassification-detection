@@ -131,9 +131,9 @@ def main(data_dir, model_path, output_csv,
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data_dir", default="knn_train_original2")
+    ap.add_argument("--data_dir", default="knn_train_original") # do the same for mixed data as well
     ap.add_argument("--model_path", default="models/advae_model.pt")
-    ap.add_argument("--output_csv", default="results/detection_features.csv")
+    ap.add_argument("--output_csv", default="results/detection_features.csv")# change the name for mixed data
     ap.add_argument("--threshold", type=float, default=0.015)
     ap.add_argument("--batch_size", type=int, default=1)
     ap.add_argument("--latent_dim", type=int, default=128)
